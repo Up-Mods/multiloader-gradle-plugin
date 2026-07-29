@@ -3,6 +3,7 @@ package dev.upcraft.gradle.multiloader.time
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
@@ -12,6 +13,7 @@ import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 
 @OptIn(ExperimentalTime::class)
+@CacheableTask
 abstract class BuildTimeManifestTask : DefaultTask() {
 
     @get:Input
