@@ -40,8 +40,6 @@ java {
     toolchain {
         languageVersion = libs.versions.java.map(JavaLanguageVersion::of)
     }
-
-    withSourcesJar()
 }
 
 tasks.named<Jar>("jar").configure {
