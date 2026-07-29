@@ -1,0 +1,35 @@
+[versions]
+# https://maven.covers1624.net/service/rest/repository/browse/maven-hosted/net/covers1624/DevLogin/
+devlogin = "0.1.0.5"
+
+autoservice = "1.1.1"
+jetbrains_annotations = "26.1.0"
+jspecify = "1.0.0"
+junit = "6.1.2"
+
+mixin = "0.17.3+mixin.0.8.7"
+mixin_extras = "0.5.4"
+asm = "9.9.1"
+
+[libraries]
+devlogin = { module = "net.covers1624:DevLogin", version.ref = "devlogin" }
+
+autoservice = { module = "com.google.auto.service:auto-service", version.ref = "autoservice" }
+autoservice_annotations = { module = "com.google.auto.service:auto-service-annotations", version.ref = "autoservice" }
+jetbrains_annotations = { module = "org.jetbrains:annotations", version.ref = "jetbrains_annotations" }
+jspecify = { module = "org.jspecify:jspecify", version.ref = "jspecify" }
+
+junit_api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
+junit_launcher = { module = "org.junit.platform:junit-platform-launcher" }
+junit_engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }
+
+mixin = { module = "net.fabricmc:sponge-mixin", version.ref = "mixin" }
+mixin_extras = { module = "io.github.llamalad7:mixinextras-common", version.ref = "mixin_extras" }
+asm = { module = "org.ow2.asm:asm", version.ref = "asm" }
+asm_analysis = { module = "org.ow2.asm:asm-analysis", version.ref = "asm" }
+asm_commons = { module = "org.ow2.asm:asm-commons", version.ref = "asm" }
+asm_tree = { module = "org.ow2.asm:asm-tree", version.ref = "asm" }
+asm_util = { module = "org.ow2.asm:asm-util", version.ref = "asm" }
+
+[bundles]
+mixin = ["mixin", "mixin_extras", "asm", "asm_analysis", "asm_commons", "asm_tree", "asm_util"]
