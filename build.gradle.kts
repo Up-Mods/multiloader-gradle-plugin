@@ -12,7 +12,7 @@ plugins {
 }
 
 group = "dev.upcraft.gradle.multiloader"
-version = "0.1.0-SNAPSHOT"
+version = providers.environmentVariable("TAG").orElse("0.1.0-dev-SNAPSHOT")
 
 repositories {
     mavenCentral()
