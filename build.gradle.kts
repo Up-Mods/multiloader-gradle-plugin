@@ -109,3 +109,18 @@ tasks.named<Task>("check").configure {
     // Include functionalTest as part of the check lifecycle
     dependsOn(testing.suites.named("functionalTest"))
 }
+
+publishing {
+    repositories {
+        providers.environmentVariable("MAVEN_UPLOAD_URL").orNull?.let {
+            maven(it) {
+                credentials {
+                    username = providers.environmentVariable("MAVEN_UPLOAD_USERNAME").orNull
+                    password = providers.environmentVariable("MAVEN_UPLOAD_PASSWORD").orNull
+                }
+            }
+        }
+    }
+}
+
+tasks.publish.configure { dependsOn(tasks.publishPlugins) }

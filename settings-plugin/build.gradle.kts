@@ -69,5 +69,14 @@ publishing {
         maven(buildRepo.get()) {
             name = "buildDir"
         }
+
+        providers.environmentVariable("MAVEN_UPLOAD_URL").orNull?.let {
+            maven(it) {
+                credentials {
+                    username = providers.environmentVariable("MAVEN_UPLOAD_USERNAME").orNull
+                    password = providers.environmentVariable("MAVEN_UPLOAD_PASSWORD").orNull
+                }
+            }
+        }
     }
 }
