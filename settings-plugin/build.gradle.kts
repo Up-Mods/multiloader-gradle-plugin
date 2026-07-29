@@ -1,9 +1,12 @@
+import org.gradle.plugin.compatibility.compatibility
+
 plugins {
     `java-gradle-plugin`
     `kotlin-dsl`
     `maven-publish`
     `version-catalog`
     alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.gradle.publishing)
 }
 
 group = rootProject.group
@@ -12,6 +15,19 @@ version = rootProject.version
 repositories {
     mavenCentral()
     gradlePluginPortal()
+}
+
+dependencies {
+    compileOnly(gradleApi())
+    compileOnly(gradleKotlinDsl())
+}
+
+java {
+    toolchain {
+        languageVersion = libs.versions.java.map(JavaLanguageVersion::of)
+    }
+
+    withSourcesJar()
 }
 
 tasks.named<Jar>("jar").configure {
@@ -23,9 +39,17 @@ tasks.named<Jar>("jar").configure {
 }
 
 gradlePlugin {
-    val multiloaderSettings = plugins.create("multiloaderSettings") {
+    plugins.create("multiloaderSettings") {
         id = "dev.upcraft.gradle.multiloader.settings"
         implementationClass = "dev.upcraft.gradle.multiloader.settings.MultiLoaderSettingsPlugin"
+        displayName = "Minecraft Multiloader Settings Plugin"
+        description = "Settings Plugin for `dev.upcraft.gradle.multiloader` plugin."
+        tags.addAll("minecraft", "multiloader", "mods")
+        compatibility {
+            features {
+                configurationCache = true
+            }
+        }
     }
 }
 

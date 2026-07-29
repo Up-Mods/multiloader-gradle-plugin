@@ -1,5 +1,7 @@
 [versions]
+java = "25"
 kotlin = "2.3.21"
+gradle_publishing = "2.1.1"
 idea_ext = "1.4.1"
 
 junit = "6.1.2"
@@ -16,3 +18,4 @@ idea_ext = { module = "org.jetbrains.gradle.plugin.idea-ext:org.jetbrains.gradle
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+gradle-publishing = { id = "com.gradle.plugin-publish", version.ref = "gradle_publishing" }

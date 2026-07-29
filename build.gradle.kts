@@ -1,14 +1,15 @@
 @file:Suppress("UnstableApiUsage")
 
+import org.gradle.plugin.compatibility.compatibility
+
 plugins {
     `java-gradle-plugin`
     `kotlin-dsl`
     `maven-publish`
     `version-catalog`
     alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.gradle.publishing)
 }
-
-val javaVersion = 25
 
 group = "dev.upcraft.gradle.multiloader"
 version = "0.1.0-SNAPSHOT"
@@ -37,7 +38,7 @@ dependencies {
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(javaVersion)
+        languageVersion = libs.versions.java.map(JavaLanguageVersion::of)
     }
 
     withSourcesJar()
@@ -52,9 +53,20 @@ tasks.named<Jar>("jar").configure {
 }
 
 gradlePlugin {
-    val multiloader = plugins.create("multiloader") {
+    website = "https://mods.upcraft.dev"
+    vcsUrl = "https://github.com/Up-Mods/multiloader-gradle-plugin.git"
+
+    plugins.create("multiloader") {
         id = "dev.upcraft.gradle.multiloader"
         implementationClass = "dev.upcraft.gradle.multiloader.MultiloaderPlugin"
+        displayName = "Minecraft Multiloader Plugin"
+        description = "Common configuration plugin for multi-loader environment development of Minecraft mods"
+        tags.addAll("minecraft", "multiloader", "mods")
+        compatibility {
+            features {
+                configurationCache = true
+            }
+        }
     }
 }
 
