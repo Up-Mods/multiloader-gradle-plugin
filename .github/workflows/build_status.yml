@@ -8,6 +8,10 @@ on:
 env:
   JAVA_VERSION: 25
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     name: Build
