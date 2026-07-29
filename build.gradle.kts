@@ -6,6 +6,8 @@ plugins {
     alias(libs.plugins.kotlin.jvm)
 }
 
+val javaVersion = 25
+
 group = "dev.upcraft.gradle.multiloader"
 version = "0.1.0-SNAPSHOT"
 
@@ -29,6 +31,12 @@ dependencies {
     implementation(libs.idea.ext)
     compileOnly(libs.moddevgradle)
     compileOnly(libs.fabric.loom)
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(javaVersion)
+    }
 }
 
 tasks.named<Jar>("jar").configure {
