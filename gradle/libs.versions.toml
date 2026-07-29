@@ -1,0 +1,18 @@
+[versions]
+kotlin = "2.3.21"
+idea_ext = "1.4.1"
+
+junit = "6.1.2"
+
+moddevgradle = "2.0.141" # https://projects.neoforged.net/neoforged/moddevgradle
+fabric_loom = "1.17.17" # https://maven.fabricmc.net/net/fabricmc/fabric-loom/net.fabricmc.fabric-loom.gradle.plugin/
+
+[libraries]
+junit-parameterized-tests = { module = "org.junit.jupiter:junit-jupiter-params", version.ref = "junit" }
+
+moddevgradle = { module = "net.neoforged.moddev:net.neoforged.moddev.gradle.plugin", version.ref = "moddevgradle" }
+fabric_loom = { module = "net.fabricmc.fabric-loom:net.fabricmc.fabric-loom.gradle.plugin", version.ref = "fabric_loom" }
+idea_ext = { module = "org.jetbrains.gradle.plugin.idea-ext:org.jetbrains.gradle.plugin.idea-ext.gradle.plugin", version.ref = "idea_ext" }
+
+[plugins]
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
