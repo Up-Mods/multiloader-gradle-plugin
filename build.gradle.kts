@@ -120,5 +120,3 @@ publishing {
         }
     }
 }
-
-tasks.publish.configure { dependsOn(tasks.publishPlugins) }

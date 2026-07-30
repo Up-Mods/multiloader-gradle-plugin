@@ -40,7 +40,7 @@ jobs:
 
       # Build
       - name: Build and Publish to Maven and Gradle Plugin Portal
-        run: ./gradlew assemble publish
+        run: ./gradlew assemble publish publishPlugins
 
       # Upload
       - name: Upload build artifacts (Settings)
