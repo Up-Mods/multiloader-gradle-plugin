@@ -11,5 +11,5 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "multiloader-gradle-plugin"
-include("settings-plugin")
-project(":settings-plugin").name = "multiloader-gradle-settings-plugin"
+
+include("settings-plugin", "shared-dependencies")

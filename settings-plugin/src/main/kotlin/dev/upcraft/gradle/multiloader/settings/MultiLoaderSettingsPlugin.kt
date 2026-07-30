@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 package dev.upcraft.gradle.multiloader.settings
 
 import org.gradle.api.Plugin
@@ -14,17 +16,19 @@ abstract class MultiLoaderSettingsPlugin @Inject constructor(factory: ProviderFa
     override fun apply(target: Settings) = with(target) {
         dependencyResolutionManagement {
             repositories {
-                maven("https://maven.uuid.gg/releases")
+                maven("https://maven.uuid.gg/releases") {
+                    content { includeModule("dev.upcraft.gradle.multiloader", "shared-dependencies") }
+                }
             }
             versionCatalogs {
                 register("multiloaderSharedDependencies") {
-                    from("dev.upcraft.gradle.multiloader:multiloader-gradle-settings-plugin:${version.get()}")
+                    from("dev.upcraft.gradle.multiloader:shared-dependencies:${version.get()}")
                 }
             }
         }
         pluginManagement {
             repositories {
-                maven("https://maven.uuid.gg/releases")
+                gradlePluginPortal()
             }
             plugins {
                 id("dev.upcraft.gradle.multiloader") version version.get()

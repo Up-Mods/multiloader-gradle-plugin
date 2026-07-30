@@ -29,9 +29,13 @@ class `02_DetectVersionsFunctionalTest` {
         settingsFile.writeText("""
             dependencyResolutionManagement {
                 repositories {
-                    maven {
-                        url = uri("$buildRepo")
-                        name = "buildDir"
+                    exclusiveContent {
+                        forRepository {
+                            maven("$buildRepo") { name = "buildDir" }
+                        }
+                        filter {
+                            includeModule("dev.upcraft.gradle.multiloader", "shared-dependencies")
+                        }
                     }
                 }
             }

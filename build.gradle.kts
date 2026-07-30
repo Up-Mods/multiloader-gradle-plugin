@@ -12,7 +12,7 @@ plugins {
 }
 
 group = "dev.upcraft.gradle.multiloader"
-version = providers.environmentVariable("TAG").getOrElse("0.1.0-dev-SNAPSHOT")
+version = providers.environmentVariable("TAG").getOrElse("0.1.0-dev")
 
 repositories {
     mavenCentral()
@@ -30,7 +30,7 @@ dependencies {
     compileOnly(gradleApi())
     compileOnly(gradleKotlinDsl())
 
-    implementation(project(":multiloader-gradle-settings-plugin"))
+    implementation(project(":settings-plugin"))
     implementation(libs.idea.ext)
     compileOnly(libs.moddevgradle)
     compileOnly(libs.fabric.loom)
@@ -68,7 +68,7 @@ gradlePlugin {
     }
 }
 
-val buildRepo = project(":multiloader-gradle-settings-plugin").layout.buildDirectory.dir("repo").map { it.asFile.toURI() }
+val buildRepo = project(":shared-dependencies").layout.buildDirectory.dir("repo").map { it.asFile.toURI() }
 
 testing {
     suites {
@@ -91,7 +91,7 @@ testing {
                     // This test suite should run after the built-in test suite has run its tests
                     testTask.configure {
                         shouldRunAfter(test)
-                        dependsOn(project(":multiloader-gradle-settings-plugin").tasks.named("publishAllPublicationsToBuildDirRepository"))
+                        dependsOn(project(":shared-dependencies").tasks.named("publishAllPublicationsToBuildDirRepository"))
                         systemProperty("dev.upcraft.multiloader.test.build_repo", buildRepo.get())
                         systemProperty("dev.upcraft.multiloader.shared_dependencies_version", version.toString())
                     }

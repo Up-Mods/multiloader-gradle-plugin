@@ -4,8 +4,6 @@ plugins {
     `java-gradle-plugin`
     `kotlin-dsl`
     `maven-publish`
-    `version-catalog`
-    alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.gradle.publishing)
 }
 
@@ -37,6 +35,9 @@ tasks.named<Jar>("jar").configure {
 }
 
 gradlePlugin {
+    website = "https://mods.upcraft.dev"
+    vcsUrl = "https://github.com/Up-Mods/multiloader-gradle-plugin.git"
+
     plugins.create("multiloaderSettings") {
         id = "dev.upcraft.gradle.multiloader.settings"
         implementationClass = "dev.upcraft.gradle.multiloader.settings.MultiLoaderSettingsPlugin"
@@ -51,23 +52,8 @@ gradlePlugin {
     }
 }
 
-catalog {
-    versionCatalog {
-        from(rootProject.files("gradle/projects.versions.toml"))
-    }
-}
-components.named<AdhocComponentWithVariants>("java").configure {
-    addVariantsFromConfiguration(configurations["versionCatalogElements"]) { }
-}
-
-val buildRepo = layout.buildDirectory.dir("repo").map { it.asFile.toURI() }
-
 publishing {
     repositories {
-        maven(buildRepo.get()) {
-            name = "buildDir"
-        }
-
         providers.environmentVariable("MAVEN_UPLOAD_URL").orNull?.let {
             maven(it) {
                 credentials {
