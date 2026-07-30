@@ -6,7 +6,7 @@ import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.the
 
 val VersionCatalogsExtension.shared
-    get() = named("multiloaderSharedDependencies")
+    get() = find("multiloaderSharedDependencies").orElseThrow { AssertionError("Unable to find shared version catalog - did you forget to apply the 'dev.upcraft.gradle.multiloader.settings' plugin to your settings.gradle(.kts) file?") }
 
 fun applySharedDependencies(target: Project) = with(target) {
     val shared = the<VersionCatalogsExtension>().shared

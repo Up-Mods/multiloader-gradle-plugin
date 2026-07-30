@@ -1,6 +1,8 @@
 package dev.upcraft.gradle.multiloader
 
 import org.gradle.testkit.runner.GradleRunner
+import org.gradle.testkit.runner.UnexpectedBuildFailure
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import kotlin.test.Test
@@ -17,6 +19,36 @@ class `01_SettingsPluginFunctionalTest` {
 
     private val buildRepo by lazy { System.getProperty("dev.upcraft.multiloader.test.build_repo") }
     private val buildVersion by lazy { System.getProperty("dev.upcraft.multiloader.shared_dependencies_version") }
+
+    @Test
+    fun `does throw without settings plugin`() {
+        propertiesFile.writeText("""
+            dev.upcraft.multiloader.shared_dependencies_version=${buildVersion}
+        """.trimIndent())
+        settingsFile.writeText("""
+            rootProject.name = "functional-test"
+        """.trimIndent())
+        buildFile.writeText("""
+            plugins {
+                id("dev.upcraft.gradle.multiloader")
+            }
+            
+            group = "dev.upcraft.test"
+            version = "0.1.0-SNAPSHOT"
+            
+            multiLoader {
+                minecraftVersion = "26.1.2"
+            }
+        """.trimIndent())
+
+        val runner = GradleRunner.create()
+            .forwardOutput()
+            .withPluginClasspath()
+            .withArguments("dependencies", "--stacktrace")
+            .withProjectDir(projectDir)
+        val err = assertThrows<UnexpectedBuildFailure> { runner.build() }
+        assertTrue(err.buildResult.output.contains("did you forget to apply the 'dev.upcraft.gradle.multiloader.settings' plugin"))
+    }
 
     @Test
     fun `does register shared version catalog`() {
