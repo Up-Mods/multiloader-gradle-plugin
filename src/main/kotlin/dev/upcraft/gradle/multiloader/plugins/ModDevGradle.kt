@@ -3,8 +3,6 @@
 package dev.upcraft.gradle.multiloader.plugins
 
 import dev.upcraft.gradle.multiloader.api.MultiloaderExtension
-import dev.upcraft.gradle.multiloader.getTestModId
-import dev.upcraft.gradle.multiloader.hasTestMod
 import dev.upcraft.gradle.multiloader.mcTransformer
 import dev.upcraft.gradle.multiloader.shared
 import net.neoforged.moddevgradle.dsl.NeoForgeExtension
@@ -101,24 +99,24 @@ fun applyMDG(target: Project, ext: MultiloaderExtension) = with(target) {
                         programArgument("--nogui")
                     }
 
-                    if(ext.hasTestMod()) {
+                    ext.testmodConfig?.let { testmod ->
                         register("testmodClient") {
                             client()
                             devLogin = ext.devLogin
                             gameDirectory = file("run/testmod_client")
-                            systemProperty("neoforge.enabledGameTestNamespaces", ext.getTestModId())
+                            systemProperty("neoforge.enabledGameTestNamespaces", testmod.modId.get())
 
-                            sourceSet = java.sourceSets["testmod"]
-                            loadedMods = listOf(mods[ext.modId.get()], mods[ext.getTestModId()])
+                            sourceSet = testmod.sourceSetName.map { java.sourceSets[it] }
+                            loadedMods = listOf(mods[ext.modId.get()], mods[testmod.modId.get()])
                         }
 
                         register("testmodServer") {
                             server()
                             gameDirectory = file("run/testmod_server")
-                            systemProperty("neoforge.enabledGameTestNamespaces", ext.getTestModId())
+                            systemProperty("neoforge.enabledGameTestNamespaces", testmod.modId.get())
 
-                            sourceSet = java.sourceSets["testmod"]
-                            loadedMods = listOf(mods[ext.modId.get()], mods[ext.getTestModId()])
+                            sourceSet = testmod.sourceSetName.map { java.sourceSets[it] }
+                            loadedMods = listOf(mods[ext.modId.get()], mods[testmod.modId.get()])
 
                             programArgument("--nogui")
                         }

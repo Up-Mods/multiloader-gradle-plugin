@@ -97,30 +97,35 @@ abstract class MultiloaderExtension @Inject constructor(factory: ProviderFactory
         testmodConfig = cfg
 
         val javaPlugin = the(JavaPluginExtension::class)
-        val testMod = javaPlugin.sourceSets.register("testmod") {
+        val testMod = javaPlugin.sourceSets.register(cfg.sourceSetName.get()) {
             compileClasspath += javaPlugin.sourceSets["main"].compileClasspath
             runtimeClasspath += javaPlugin.sourceSets["main"].runtimeClasspath
         }
 
-        javaPlugin.registerFeature("testmod") {
-            usingSourceSet(testMod.get())
-        }
-
-        dependencies {
-            "testmodImplementation"(javaPlugin.sourceSets["main"].output)
+        testMod.configure {
+            javaPlugin.registerFeature("testmod") {
+                usingSourceSet(this@configure)
+            }
+            dependencies {
+                implementationConfigurationName(javaPlugin.sourceSets["main"].output)
+            }
         }
 
         afterEvaluate {
             val shared = the(VersionCatalogsExtension::class).shared
-            dependencies {
-                shared.findLibrary("autoservice_annotations").ifPresent { "testmodCompileOnly"(it) }
-                shared.findLibrary("autoservice").ifPresent { "testmodAnnotationProcessor"(it) }
-            }
+            val publishing = the(PublishingExtension::class)
 
-            the(PublishingExtension::class).publications {
-                withType<MavenPublication>().configureEach {
-                    suppressPomMetadataWarningsFor("testmodApiElements")
-                    suppressPomMetadataWarningsFor("testmodRuntimeElements")
+            testMod.configure {
+                dependencies {
+                    shared.findLibrary("autoservice_annotations").ifPresent { compileOnlyConfigurationName(it) }
+                    shared.findLibrary("autoservice").ifPresent { annotationProcessorConfigurationName(it) }
+                }
+
+                publishing.publications {
+                    withType<MavenPublication>().configureEach {
+                        suppressPomMetadataWarningsFor(apiElementsConfigurationName)
+                        suppressPomMetadataWarningsFor(runtimeElementsConfigurationName)
+                    }
                 }
             }
         }

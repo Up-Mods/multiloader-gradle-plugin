@@ -184,19 +184,17 @@ abstract class MultiloaderPlugin : Plugin<Project> {
                     platform("net.neoforged:minecraft-dependencies:${ext.minecraftVersion.get()}")
                 }
 
-                if(ext.hasTestMod()) {
+                ext.testmodConfig?.let {
                     val testmodCommonResources = configurations.consumable("testmodCommonResources")
                     val testmodCommonJava = configurations.consumable("testmodCommonJava")
 
                     extensions.configure<JavaPluginExtension> {
                         artifacts {
-                            sourceSets["testmod"].java.sourceDirectories.forEach { add(testmodCommonJava.name, it) }
-                            sourceSets["testmod"].resources.sourceDirectories.forEach { add(testmodCommonResources.name, it) }
+                            sourceSets[it.sourceSetName.get()].java.sourceDirectories.forEach { artifact -> add(testmodCommonJava.name, artifact) }
+                            sourceSets[it.sourceSetName.get()].resources.sourceDirectories.forEach { artifact -> add(testmodCommonResources.name, artifact) }
                         }
                     }
                 }
-
-
             }
 
             fun isJson(path: String): Boolean {

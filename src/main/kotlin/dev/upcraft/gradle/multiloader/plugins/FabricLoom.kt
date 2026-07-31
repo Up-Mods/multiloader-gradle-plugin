@@ -4,7 +4,6 @@ package dev.upcraft.gradle.multiloader.plugins
 
 import dev.upcraft.gradle.multiloader.api.MultiloaderExtension
 import dev.upcraft.gradle.multiloader.devLogin
-import dev.upcraft.gradle.multiloader.hasTestMod
 import dev.upcraft.gradle.multiloader.mcTransformer
 import dev.upcraft.gradle.multiloader.shared
 import net.fabricmc.loom.api.LoomGradleExtensionAPI
@@ -68,18 +67,18 @@ fun applyLoom(target: Project, ext: MultiloaderExtension) = with(target) {
                     runDirectory = file("run/server")
                 }
 
-                if(ext.hasTestMod()) {
+                ext.testmodConfig?.let {
                     create("testmodClient") {
                         client()
                         displayName = "Fabric TestmodClient"
                         runDirectory = file("run/testmod_client")
-                        sourceSet = "testmod"
+                        sourceSet = it.sourceSetName
                     }
                     create("testmodServer") {
                         server()
                         displayName = "Fabric TestmodServer"
                         runDirectory = file("run/testmod_server")
-                        sourceSet = "testmod"
+                        sourceSet = it.sourceSetName
                     }
                 }
             }
