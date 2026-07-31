@@ -1,11 +1,12 @@
 package dev.upcraft.gradle.multiloader
 
 import org.gradle.api.Project
+import org.gradle.api.artifacts.VersionCatalog
 import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.the
 
-val VersionCatalogsExtension.shared
+val VersionCatalogsExtension.shared: VersionCatalog
     get() = find("multiloaderSharedDependencies").orElseThrow { AssertionError("Unable to find shared version catalog - did you forget to apply the 'dev.upcraft.gradle.multiloader.settings' plugin to your settings.gradle(.kts) file?") }
 
 fun applySharedDependencies(target: Project) = with(target) {
