@@ -12,11 +12,16 @@ plugins {
 multiLoader {
     javaVersion = 25 // make all compile tasks use Java 25 JDK
     minecraftVersion = "26.1.2" // add Minecraft 26.1.2 dependency via MDG/Loom
+    modId = "mod_id" // default is set via gradle property "mod_id"
     
     loader = "fabric" // tell the plugin which loader subproject this is, valid values are 'common', 'fabric', 'neoforge'
 
     // generate a testmod source set and make it depend on the main mod
     withTestmod()
+    //OR:
+    withTestmod {
+        modId = "my_test_mod"
+    }
 
     // apply standard variable replacements during processResources tasks
     applyMetadataReplacements(listOf("pack.mcmeta", "*.mixins.json"))
