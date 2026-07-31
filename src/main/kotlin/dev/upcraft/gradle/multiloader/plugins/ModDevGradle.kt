@@ -99,7 +99,7 @@ fun applyMDG(target: Project, ext: MultiloaderExtension) = with(target) {
                         programArgument("--nogui")
                     }
 
-                    if(ext.hasTestmod) {
+                    if(ext.hasTestMod()) {
                         register("testmodClient") {
                             client()
                             devLogin = ext.devLogin

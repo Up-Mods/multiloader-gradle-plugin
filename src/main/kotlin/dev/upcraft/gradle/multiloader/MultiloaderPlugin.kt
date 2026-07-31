@@ -183,7 +183,7 @@ abstract class MultiloaderPlugin : Plugin<Project> {
                     platform("net.neoforged:minecraft-dependencies:${ext.minecraftVersion.get()}")
                 }
 
-                if(ext.hasTestmod) {
+                if(ext.hasTestMod()) {
                     val testmodCommonResources = configurations.consumable("testmodCommonResources")
                     val testmodCommonJava = configurations.consumable("testmodCommonJava")
 

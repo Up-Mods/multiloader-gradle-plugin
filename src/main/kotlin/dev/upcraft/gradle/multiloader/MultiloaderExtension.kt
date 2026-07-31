@@ -1,5 +1,6 @@
 package dev.upcraft.gradle.multiloader
 
+import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.api.plugins.JavaPluginExtension
@@ -11,6 +12,7 @@ import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.SourceSet
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.get
+import org.gradle.kotlin.dsl.newInstance
 import org.gradle.kotlin.dsl.the
 import org.gradle.kotlin.dsl.withType
 import org.jetbrains.annotations.NotNull
@@ -54,8 +56,8 @@ abstract class MultiloaderExtension @Inject constructor(factory: ProviderFactory
     abstract val mixinDebugRuns: Property<Boolean>
     abstract val loaderDebugRuns: Property<Boolean>
 
-    internal var hasTestmod = false
-    private var testmodId: String? = null
+    internal val testmodConfig: TestmodConfiguration? = null
+
     internal var processResourcesProperties: List<Pair<List<String>, Map<String, Any>?>> = mutableListOf()
 
     init {
@@ -88,9 +90,11 @@ abstract class MultiloaderExtension @Inject constructor(factory: ProviderFactory
         loaderDebugRuns.convention(false)
     }
 
-    fun withTestmod(modId: String? = null): Provider<SourceSet> = with(project) {
-        hasTestmod = true
-        testmodId = modId
+    fun withTestmod(config: Action<TestmodConfiguration>? = null): Provider<SourceSet> = with(project) {
+        val testmodConfig = objects.newInstance(TestmodConfiguration::class)
+
+        config?.execute(testmodConfig)
+
         val javaPlugin = the(JavaPluginExtension::class)
         val testMod = javaPlugin.sourceSets.register("testmod") {
             compileClasspath += javaPlugin.sourceSets["main"].compileClasspath
@@ -130,6 +134,8 @@ abstract class MultiloaderExtension @Inject constructor(factory: ProviderFactory
     fun setCommonProject(projectPath: String) = applyCommonProjectDependency(project, projectPath)
 
     internal fun getTestModId(): String {
-        return testmodId ?: "${modId.get()}_testmod"
+        return testmodConfig?.modId?.get() ?: error("Cannot retrieve testmod ID, no testmod configured!")
     }
+
+    internal fun hasTestMod(): Boolean = testmodConfig != null
 }

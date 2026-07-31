@@ -72,7 +72,7 @@ fun applyLoom(target: Project, ext: MultiloaderExtension) = with(target) {
                     runDirectory = file("run/server")
                 }
 
-                if(ext.hasTestmod) {
+                if(ext.hasTestMod()) {
                     create("testmodClient") {
                         client()
                         displayName = "Fabric TestmodClient"

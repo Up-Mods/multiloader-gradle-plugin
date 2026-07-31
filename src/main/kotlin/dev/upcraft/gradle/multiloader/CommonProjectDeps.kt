@@ -58,7 +58,7 @@ fun applyCommonProjectDependency(current: Project, commonProject: String) = with
             from(commonJava, commonResources)
         }
 
-        if(the(MultiloaderExtension::class).hasTestmod) {
+        if(the(MultiloaderExtension::class).hasTestMod()) {
             val testmodCommonJavaDep = configurations.dependencyScope("testmodCommonJavaDep")
             val testmodCommonJava = configurations.resolvable("testmodCommonJava") { extendsFrom(testmodCommonJavaDep) }
             val testmodCommonResourcesDep = configurations.dependencyScope("testmodCommonResourcesDep")
