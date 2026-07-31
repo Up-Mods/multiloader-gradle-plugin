@@ -2,6 +2,7 @@
 
 package dev.upcraft.gradle.multiloader
 
+import dev.upcraft.gradle.multiloader.api.MultiloaderExtension
 import dev.upcraft.gradle.multiloader.plugins.ModDevGradle
 import dev.upcraft.gradle.multiloader.plugins.applyMDGCommonProject
 import org.gradle.api.Project

@@ -2,7 +2,9 @@
 
 package dev.upcraft.gradle.multiloader.plugins
 
-import dev.upcraft.gradle.multiloader.MultiloaderExtension
+import dev.upcraft.gradle.multiloader.api.MultiloaderExtension
+import dev.upcraft.gradle.multiloader.getTestModId
+import dev.upcraft.gradle.multiloader.hasTestMod
 import dev.upcraft.gradle.multiloader.mcTransformer
 import dev.upcraft.gradle.multiloader.shared
 import net.neoforged.moddevgradle.dsl.NeoForgeExtension

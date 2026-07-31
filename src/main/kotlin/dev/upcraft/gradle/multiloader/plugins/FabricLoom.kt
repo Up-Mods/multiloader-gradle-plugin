@@ -2,8 +2,9 @@
 
 package dev.upcraft.gradle.multiloader.plugins
 
-import dev.upcraft.gradle.multiloader.MultiloaderExtension
+import dev.upcraft.gradle.multiloader.api.MultiloaderExtension
 import dev.upcraft.gradle.multiloader.devLogin
+import dev.upcraft.gradle.multiloader.hasTestMod
 import dev.upcraft.gradle.multiloader.mcTransformer
 import dev.upcraft.gradle.multiloader.shared
 import net.fabricmc.loom.api.LoomGradleExtensionAPI
@@ -11,17 +12,12 @@ import net.fabricmc.loom.task.LoomTasks
 import org.gradle.api.Project
 import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.api.attributes.Attribute
-import org.gradle.api.attributes.Category
-import org.gradle.api.file.RegularFile
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.kotlin.dsl.assign
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.invoke
-import org.gradle.kotlin.dsl.maven
-import org.gradle.kotlin.dsl.named
-import org.gradle.kotlin.dsl.repositories
 import org.gradle.kotlin.dsl.the
 import org.gradle.plugins.ide.idea.model.IdeaModel
 import org.jetbrains.gradle.ext.Gradle

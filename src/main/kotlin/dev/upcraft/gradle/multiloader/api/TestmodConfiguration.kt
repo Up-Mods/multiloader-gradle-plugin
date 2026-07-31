@@ -1,4 +1,4 @@
-package dev.upcraft.gradle.multiloader
+package dev.upcraft.gradle.multiloader.api
 
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.ProviderFactory

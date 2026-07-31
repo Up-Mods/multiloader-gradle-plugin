@@ -1,5 +1,6 @@
 package dev.upcraft.gradle.multiloader
 
+import dev.upcraft.gradle.multiloader.api.MultiloaderExtension
 import dev.upcraft.gradle.multiloader.plugins.applyLoomMcGradleConventions
 import org.gradle.api.Project
 import org.gradle.api.attributes.Attribute

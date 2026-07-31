@@ -1,5 +1,7 @@
-package dev.upcraft.gradle.multiloader
+package dev.upcraft.gradle.multiloader.api
 
+import dev.upcraft.gradle.multiloader.applyCommonProjectDependency
+import dev.upcraft.gradle.multiloader.shared
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.artifacts.VersionCatalogsExtension
@@ -15,7 +17,6 @@ import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.newInstance
 import org.gradle.kotlin.dsl.the
 import org.gradle.kotlin.dsl.withType
-import org.jetbrains.annotations.NotNull
 import javax.inject.Inject
 
 @Suppress("unused")
@@ -56,7 +57,7 @@ abstract class MultiloaderExtension @Inject constructor(factory: ProviderFactory
     abstract val mixinDebugRuns: Property<Boolean>
     abstract val loaderDebugRuns: Property<Boolean>
 
-    internal val testmodConfig: TestmodConfiguration? = null
+    internal var testmodConfig: TestmodConfiguration? = null
 
     internal var processResourcesProperties: List<Pair<List<String>, Map<String, Any>?>> = mutableListOf()
 
@@ -91,9 +92,9 @@ abstract class MultiloaderExtension @Inject constructor(factory: ProviderFactory
     }
 
     fun withTestmod(config: Action<TestmodConfiguration>? = null): Provider<SourceSet> = with(project) {
-        val testmodConfig = objects.newInstance(TestmodConfiguration::class)
-
-        config?.execute(testmodConfig)
+        val cfg = objects.newInstance(TestmodConfiguration::class)
+        config?.execute(cfg)
+        testmodConfig = cfg
 
         val javaPlugin = the(JavaPluginExtension::class)
         val testMod = javaPlugin.sourceSets.register("testmod") {
@@ -132,10 +133,4 @@ abstract class MultiloaderExtension @Inject constructor(factory: ProviderFactory
     }
 
     fun setCommonProject(projectPath: String) = applyCommonProjectDependency(project, projectPath)
-
-    internal fun getTestModId(): String {
-        return testmodConfig?.modId?.get() ?: error("Cannot retrieve testmod ID, no testmod configured!")
-    }
-
-    internal fun hasTestMod(): Boolean = testmodConfig != null
 }
