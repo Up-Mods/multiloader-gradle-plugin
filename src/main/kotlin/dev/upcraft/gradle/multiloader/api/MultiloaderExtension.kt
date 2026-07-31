@@ -92,7 +92,7 @@ abstract class MultiloaderExtension @Inject constructor(factory: ProviderFactory
     }
 
     fun withTestmod(config: Action<TestmodConfiguration>? = null): Provider<SourceSet> = with(project) {
-        val cfg = objects.newInstance(TestmodConfiguration::class)
+        val cfg = objects.newInstance(TestmodConfiguration::class, this@MultiloaderExtension)
         config?.execute(cfg)
         testmodConfig = cfg
 
