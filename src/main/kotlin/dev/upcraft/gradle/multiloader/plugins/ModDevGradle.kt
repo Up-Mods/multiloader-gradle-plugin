@@ -15,6 +15,7 @@ import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.the
 import org.slf4j.event.Level
+import java.io.File
 import java.util.Locale
 
 object ModDevGradle {
@@ -81,7 +82,7 @@ fun applyMDG(target: Project, ext: MultiloaderExtension) = with(target) {
                     register("client") {
                         client()
                         devLogin = ext.devLogin
-                        gameDirectory = file("run/client")
+                        gameDirectory = ext.runDir("client")
                         systemProperty("neoforge.enabledGameTestNamespaces", ext.modId.get())
 
                         sourceSet = java.sourceSets["main"]
@@ -90,7 +91,7 @@ fun applyMDG(target: Project, ext: MultiloaderExtension) = with(target) {
 
                     register("server") {
                         server()
-                        gameDirectory = file("run/server")
+                        gameDirectory = ext.runDir("server")
                         systemProperty("neoforge.enabledGameTestNamespaces", ext.modId.get())
 
                         sourceSet = java.sourceSets["main"]
@@ -103,7 +104,7 @@ fun applyMDG(target: Project, ext: MultiloaderExtension) = with(target) {
                         register("testmodClient") {
                             client()
                             devLogin = ext.devLogin
-                            gameDirectory = file("run/testmod_client")
+                            gameDirectory = ext.runDir("testmod_client")
                             systemProperty("neoforge.enabledGameTestNamespaces", testmod.modId.get())
 
                             sourceSet = testmod.sourceSetName.map { java.sourceSets[it] }
@@ -112,7 +113,7 @@ fun applyMDG(target: Project, ext: MultiloaderExtension) = with(target) {
 
                         register("testmodServer") {
                             server()
-                            gameDirectory = file("run/testmod_server")
+                            gameDirectory = ext.runDir("testmod_server")
                             systemProperty("neoforge.enabledGameTestNamespaces", testmod.modId.get())
 
                             sourceSet = testmod.sourceSetName.map { java.sourceSets[it] }

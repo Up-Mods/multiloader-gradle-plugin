@@ -17,6 +17,7 @@ import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.newInstance
 import org.gradle.kotlin.dsl.the
 import org.gradle.kotlin.dsl.withType
+import java.io.File
 import javax.inject.Inject
 
 @Suppress("unused")
@@ -49,6 +50,9 @@ abstract class MultiloaderExtension @Inject constructor(factory: ProviderFactory
 
     abstract val applySharedAccessTransforms: Property<Boolean>
 
+    // run configurations
+    abstract val commonRunDirectory: Property<Boolean>
+
     /**
      * [DevLogin](https://github.com/covers1624/DevLogin)
      */
@@ -74,17 +78,20 @@ abstract class MultiloaderExtension @Inject constructor(factory: ProviderFactory
         modId.convention(factory.gradleProperty("mod_id"))
         modDisplayName.convention(factory.gradleProperty("mod_display_name").orElse(factory.provider { project.displayName }))
         modDescription.convention(factory.gradleProperty("mod_description").orElse(""))
-        modDiscordUrl.convention(factory.gradleProperty("discord_url"))
+        modDiscordUrl.convention(factory.gradleProperty("discord_url").orElse(""))
         modSourcesUrl.convention(factory.gradleProperty("sources_url").orElse(""))
-        modIssuesUrl.convention(factory.gradleProperty("issues_url"))
-        modLicenseUrl.convention(factory.gradleProperty("license_url"))
-        modHomepageUrl.convention(factory.gradleProperty("homepage_url").orElse(modDiscordUrl).orElse(modSourcesUrl))
+        modIssuesUrl.convention(factory.gradleProperty("issues_url").orElse(""))
+        modLicenseUrl.convention(factory.gradleProperty("license_url").orElse(""))
+        modHomepageUrl.convention(factory.gradleProperty("homepage_url").orElse(modDiscordUrl).orElse(modSourcesUrl).orElse(""))
 
         curseforgeId.convention(factory.gradleProperty("curseforge_id").orElse(""))
         modrinthId.convention(factory.gradleProperty("modrinth_id").orElse(""))
 
         loader.convention("common")
         applySharedAccessTransforms.convention(loader.map { it == "common" })
+
+        commonRunDirectory.convention(false)
+
         devLogin.convention(true)
         debugRuns.convention(true)
         mixinDebugRuns.convention(debugRuns)
@@ -138,4 +145,9 @@ abstract class MultiloaderExtension @Inject constructor(factory: ProviderFactory
     }
 
     fun setCommonProject(projectPath: String) = applyCommonProjectDependency(project, projectPath)
+
+    fun runDir(name: String): File {
+        val baseDir = if (commonRunDirectory.get()) "../common" else project.projectDir
+        return File("${baseDir}/run/$name")
+    }
 }
