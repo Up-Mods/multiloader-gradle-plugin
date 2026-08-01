@@ -17,6 +17,7 @@ import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.newInstance
 import org.gradle.kotlin.dsl.the
 import org.gradle.kotlin.dsl.withType
+import java.io.File
 import javax.inject.Inject
 
 @Suppress("unused")
@@ -48,6 +49,9 @@ abstract class MultiloaderExtension @Inject constructor(factory: ProviderFactory
     abstract val loader: Property<String>
 
     abstract val applySharedAccessTransforms: Property<Boolean>
+
+    // run configurations
+    abstract val commonRunDirectory: Property<Boolean>
 
     /**
      * [DevLogin](https://github.com/covers1624/DevLogin)
@@ -85,6 +89,9 @@ abstract class MultiloaderExtension @Inject constructor(factory: ProviderFactory
 
         loader.convention("common")
         applySharedAccessTransforms.convention(loader.map { it == "common" })
+
+        commonRunDirectory.convention(false)
+
         devLogin.convention(true)
         debugRuns.convention(true)
         mixinDebugRuns.convention(debugRuns)
@@ -138,4 +145,9 @@ abstract class MultiloaderExtension @Inject constructor(factory: ProviderFactory
     }
 
     fun setCommonProject(projectPath: String) = applyCommonProjectDependency(project, projectPath)
+
+    fun runDir(name: String): File {
+        val baseDir = if (commonRunDirectory.get()) "../common" else project.projectDir
+        return File("${baseDir}/run/$name")
+    }
 }

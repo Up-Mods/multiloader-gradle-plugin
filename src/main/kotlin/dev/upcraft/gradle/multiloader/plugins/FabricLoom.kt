@@ -22,6 +22,7 @@ import org.gradle.plugins.ide.idea.model.IdeaModel
 import org.jetbrains.gradle.ext.Gradle
 import org.jetbrains.gradle.ext.runConfigurations
 import org.jetbrains.gradle.ext.settings
+import java.io.File
 
 object FabricLoom {
     const val LEGACY_PLUGIN_ID = "fabric-loom"
@@ -59,25 +60,25 @@ fun applyLoom(target: Project, ext: MultiloaderExtension) = with(target) {
                 named("client") {
                     client()
                     displayName = "Fabric Client"
-                    runDirectory = file("run/client")
+                    runDirectory = ext.runDir("client")
                 }
                 named("server") {
                     server()
                     displayName = "Fabric Server"
-                    runDirectory = file("run/server")
+                    runDirectory = ext.runDir("server")
                 }
 
                 ext.testmodConfig?.let {
                     create("testmodClient") {
                         client()
                         displayName = "Fabric TestmodClient"
-                        runDirectory = file("run/testmod_client")
+                        runDirectory = ext.runDir("testmod_client")
                         sourceSet = it.sourceSetName
                     }
                     create("testmodServer") {
                         server()
                         displayName = "Fabric TestmodServer"
-                        runDirectory = file("run/testmod_server")
+                        runDirectory = ext.runDir("testmod_server")
                         sourceSet = it.sourceSetName
                     }
                 }
