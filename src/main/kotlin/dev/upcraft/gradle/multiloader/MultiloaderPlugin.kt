@@ -208,15 +208,15 @@ abstract class MultiloaderPlugin : Plugin<Project> {
                         "maven_group_id" to ext.modGroup.get(),
                         "mod_id" to ext.modId.get(),
                         "mod_display_name" to ext.modDisplayName.orElse(ext.modId).get(),
-                        "mod_description" to ext.modDescription.orNull,
-                        "sources_url" to ext.modSourcesUrl.orNull,
-                        "issues_url" to ext.modIssuesUrl.orNull,
-                        "license_url" to ext.modLicenseUrl.orNull,
-                        "discord_url" to ext.modDiscordUrl.orNull,
-                        "homepage_url" to ext.modHomepageUrl.orNull,
+                        "mod_description" to ext.modDescription.get(),
+                        "sources_url" to ext.modSourcesUrl.get(),
+                        "issues_url" to ext.modIssuesUrl.get(),
+                        "license_url" to ext.modLicenseUrl.get(),
+                        "discord_url" to ext.modDiscordUrl.get(),
+                        "homepage_url" to ext.modHomepageUrl.get(),
 
-                        "curseforge_id" to ext.curseforgeId.orNull,
-                        "modrinth_id" to ext.modrinthId.orNull,
+                        "curseforge_id" to ext.curseforgeId.get(),
+                        "modrinth_id" to ext.modrinthId.get(),
 
                         "java_version" to ext.javaVersion.get(),
                         "minecraft_version" to ext.minecraftVersion.get()
