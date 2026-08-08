@@ -2,6 +2,9 @@
 
 A Gradle plugin to facilitate multiloader Minecraft mod development
 
+> [!TIP]
+> You probably want to use the [example mod template](https://github.com/Up-Mods/multiloader-template)
+
 ### Usage
 
 ```kts
