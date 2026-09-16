@@ -7,7 +7,6 @@ plugins {
     `kotlin-dsl`
     `maven-publish`
     `version-catalog`
-    alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.gradle.publishing)
 }
 
@@ -74,12 +73,12 @@ testing {
     suites {
         val test = named<JvmTestSuite>("test") {
             useJUnitJupiter(libs.versions.junit)
-            useKotlinTest(libs.versions.kotlin)
+            useKotlinTest()
         }
 
         val functionalTest = register<JvmTestSuite>("functionalTest") {
             useJUnitJupiter(libs.versions.junit)
-            useKotlinTest(libs.versions.kotlin)
+            useKotlinTest()
 
             dependencies {
                 implementation(project())
