@@ -5,9 +5,18 @@ updates:
     directory: /
     schedule:
       interval: monthly
+    cooldown:
+      default-days: 7
+    commit-message:
+      prefix: "⬆️"
+
   - package-ecosystem: gradle
     directory: /
     schedule:
       interval: weekly
+    cooldown:
+      default-days: 7
+    commit-message:
+      prefix: "⬆️"
     # security updates ONLY
     open-pull-requests-limit: 0
