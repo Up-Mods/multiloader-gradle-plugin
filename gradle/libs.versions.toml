@@ -6,7 +6,7 @@ idea_ext = "1.4.1"
 junit = "6.1.2"
 
 moddevgradle = "2.0.141" # https://projects.neoforged.net/neoforged/moddevgradle
-fabric_loom = "1.17.17" # https://maven.fabricmc.net/net/fabricmc/fabric-loom/net.fabricmc.fabric-loom.gradle.plugin/
+fabric_loom = "1.18.4" # https://maven.fabricmc.net/net/fabricmc/fabric-loom/net.fabricmc.fabric-loom.gradle.plugin/
 
 [libraries]
 junit-parameterized-tests = { module = "org.junit.jupiter:junit-jupiter-params", version.ref = "junit" }
