@@ -23,17 +23,7 @@ import org.gradle.api.tasks.testing.Test
 import org.gradle.external.javadoc.StandardJavadocDocletOptions
 import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.jvm.toolchain.JvmVendorSpec
-import org.gradle.kotlin.dsl.assign
-import org.gradle.kotlin.dsl.configure
-import org.gradle.kotlin.dsl.create
-import org.gradle.kotlin.dsl.dependencies
-import org.gradle.kotlin.dsl.get
-import org.gradle.kotlin.dsl.maven
-import org.gradle.kotlin.dsl.named
-import org.gradle.kotlin.dsl.of
-import org.gradle.kotlin.dsl.register
-import org.gradle.kotlin.dsl.the
-import org.gradle.kotlin.dsl.withType
+import org.gradle.kotlin.dsl.*
 import org.gradle.language.jvm.tasks.ProcessResources
 import org.gradle.plugins.ide.idea.model.IdeaModel
 import kotlin.time.ExperimentalTime
@@ -62,7 +52,7 @@ abstract class MultiloaderPlugin : Plugin<Project> {
 
         //FIXME genuine gradle bug yay
         pluginManager.withPlugin(FabricLoom.LEGACY_PLUGIN_ID) {
-            if(project.pluginManager.hasPlugin(FabricLoom.PLUGIN_ID)) {
+            if (project.pluginManager.hasPlugin(FabricLoom.PLUGIN_ID)) {
                 applyLoom(this@with, ext)
             }
         }
@@ -133,10 +123,10 @@ abstract class MultiloaderPlugin : Plugin<Project> {
             logger.lifecycle("Minecraft: ${ext.minecraftVersion.get()}")
             logger.lifecycle("Java: ${ext.javaVersion.get()}")
 
-            if(ext.generateSources.get()) {
+            if (ext.generateSources.get()) {
                 javaExt.withSourcesJar()
             }
-            if(ext.generateJavadoc.get()) {
+            if (ext.generateJavadoc.get()) {
                 javaExt.withJavadocJar()
             }
 
@@ -145,8 +135,8 @@ abstract class MultiloaderPlugin : Plugin<Project> {
             listOf("LICENSE", "LICENSE.md").forEach { filename ->
                 val license = rootProject.file(filename)
                 val filenameNoExt = license.nameWithoutExtension
-                val filenameExt = license.extension.let { if(it.isNotEmpty()) ".${it}" else it }
-                if(license.exists()) {
+                val filenameExt = license.extension.let { if (it.isNotEmpty()) ".${it}" else it }
+                if (license.exists()) {
                     tasks.named<Jar>("jar").configure {
                         inputs.file(license)
                         from(license) {
@@ -154,7 +144,7 @@ abstract class MultiloaderPlugin : Plugin<Project> {
                         }
                     }
 
-                    if(ext.generateSources.get()) {
+                    if (ext.generateSources.get()) {
                         tasks.named<Jar>("sourcesJar").configure {
                             inputs.file(license)
                             from(license) {
@@ -165,7 +155,7 @@ abstract class MultiloaderPlugin : Plugin<Project> {
                 }
             }
 
-            if(ext.loader.get() == "common") {
+            if (ext.loader.get() == "common") {
                 val commonJava = configurations.consumable("commonJava")
                 val commonResources = configurations.consumable("commonResources")
 
@@ -186,8 +176,18 @@ abstract class MultiloaderPlugin : Plugin<Project> {
 
                     extensions.configure<JavaPluginExtension> {
                         artifacts {
-                            sourceSets[it.sourceSetName.get()].java.sourceDirectories.forEach { artifact -> add(testmodCommonJava.name, artifact) }
-                            sourceSets[it.sourceSetName.get()].resources.sourceDirectories.forEach { artifact -> add(testmodCommonResources.name, artifact) }
+                            sourceSets[it.sourceSetName.get()].java.sourceDirectories.forEach { artifact ->
+                                add(
+                                    testmodCommonJava.name,
+                                    artifact
+                                )
+                            }
+                            sourceSets[it.sourceSetName.get()].resources.sourceDirectories.forEach { artifact ->
+                                add(
+                                    testmodCommonResources.name,
+                                    artifact
+                                )
+                            }
                         }
                     }
                 }
@@ -222,13 +222,14 @@ abstract class MultiloaderPlugin : Plugin<Project> {
                     ext.processResourcesProperties.forEach { (patterns, extraProperties) ->
                         val finalProps = mutableMapOf<String, Any?>()
                         finalProps.putAll(expandProps)
-                        extraProperties?.mapValues { entry -> if(entry.value is Provider<*>) (entry.value as Provider<*>).orNull else entry.value }?.let { map ->
-                            inputs.properties(map)
-                            finalProps.putAll(map)
-                        }
+                        extraProperties?.mapValues { entry -> if (entry.value is Provider<*>) (entry.value as Provider<*>).orNull else entry.value }
+                            ?.let { map ->
+                                inputs.properties(map)
+                                finalProps.putAll(map)
+                            }
 
                         patterns.filter(::isJson).let { filters ->
-                            if(filters.isNotEmpty()) {
+                            if (filters.isNotEmpty()) {
                                 filesMatching(filters) {
                                     expand(finalProps) {
                                         escapeBackslash = true
@@ -237,7 +238,7 @@ abstract class MultiloaderPlugin : Plugin<Project> {
                             }
                         }
                         patterns.filterNot(::isJson).let { filters ->
-                            if(filters.isNotEmpty()) {
+                            if (filters.isNotEmpty()) {
                                 filesMatching(filters) {
                                     expand(finalProps)
                                 }
@@ -247,7 +248,7 @@ abstract class MultiloaderPlugin : Plugin<Project> {
                 }
             }
 
-            if(ext.generateManifestBuildTimestamp.get()) {
+            if (ext.generateManifestBuildTimestamp.get()) {
                 val tmpManifest = tasks.register<BuildTimeManifestTask>("createManifestTimestamp") {
                     description = "Create manifest file with build timestamp"
                     group = "build"
@@ -264,16 +265,22 @@ abstract class MultiloaderPlugin : Plugin<Project> {
             tasks.withType<Jar>().configureEach {
                 exclude(".cache/**")
 
-                manifest.attributes(mapOf<String, Any>(
-                    "Specification-Title" to rootProject.name,
-                    "Specification-Version" to rootProject.version,
+                manifest.attributes(
+                    mapOf<String, Any>(
+                        "Specification-Title" to rootProject.name,
+                        "Specification-Version" to rootProject.version,
 
-                    "Implementation-Title" to project.name,
-                    "Implementation-Version" to archiveVersion,
+                        "Implementation-Title" to project.name,
+                        "Implementation-Version" to archiveVersion,
 
-                    "Built-On-Java" to "${providers.systemProperty("java.vm.version").orNull} (${providers.systemProperty("java.vm.vendor").orNull})",
-                    "Built-On-Minecraft" to ext.minecraftVersion.get()
-                ))
+                        "Built-On-Java" to "${providers.systemProperty("java.vm.version").orNull} (${
+                            providers.systemProperty(
+                                "java.vm.vendor"
+                            ).orNull
+                        })",
+                        "Built-On-Minecraft" to ext.minecraftVersion.get()
+                    )
+                )
             }
         }
 
