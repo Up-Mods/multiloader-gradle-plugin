@@ -76,28 +76,24 @@ abstract class MultiloaderPlugin : Plugin<Project> {
         tasks.withType<JavaCompile>().configureEach {
             options.release = ext.javaVersion
 
-            // docs.oracle.com/en/java/javase/25/docs/specs/man/javac.html#options
-            val xlint = listOf(
-                "cast", // unnecessary casts
-                "dangling-doc-comments", // dangling javadoc
-                "text-blocks", // inconsistent whitespace in textblocks
-                "dep-ann", // deprecated in javadoc but no @Deprecated annotation
-                "empty", // empty if statements
-                "overrides",
-                "deprecation",
-                "removal",
-                "rawtypes",
-                "unchecked",
-                "static", // static method access using object instance
-                "varargs",
+            options.compilerArgs.addAll(
+                ext.overrideCompilerArgs.orElse(provider {
+                    buildList {
+                        addAll(
+                            listOf(
+                                "-Xmaxerrs", "500",
+                                "-Xmaxwarns", "500",
+                                "-Xpkginfo:nonempty", // only emit package-info.class if it contains class or runtime scope annotations
+                            )
+                        )
+
+                        add("-Xlint:${ext.xlint.get().joinToString(",")}")
+                        if (ext.warningsAsErrors.get()) {
+                            add("-Werror")
+                        }
+                    }
+                }).get()
             )
-            options.compilerArgs.addAll(listOf(
-                "-Xmaxerrs", "500",
-                "-Xmaxwarns", "500",
-                "-Werror", // warnings as errors
-                "-Xlint:${xlint.joinToString(",")}",
-                "-Xpkginfo:nonempty", // only emit package-info.class if it contains class or runtime scope annotations
-            ))
         }
 
         applyRepositories()

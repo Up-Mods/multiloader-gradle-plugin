@@ -6,6 +6,7 @@ import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.api.plugins.JavaPluginExtension
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
@@ -29,6 +30,14 @@ abstract class MultiloaderExtension @Inject constructor(factory: ProviderFactory
     abstract val generateJavadoc: Property<Boolean>
 
     abstract val generateManifestBuildTimestamp: Property<Boolean>
+
+    abstract val overrideCompilerArgs: ListProperty<String>
+    abstract val warningsAsErrors: Property<Boolean>
+    /**
+     * Options to be passed to javac's -Xlint config.
+     * see [Javac#options](<docs.oracle.com/en/java/javase/25/docs/specs/man/javac.html#options>)
+     */
+    abstract val xlint: ListProperty<String>
 
     // mod properties
     abstract val modVersion: Property<String>
@@ -68,6 +77,22 @@ abstract class MultiloaderExtension @Inject constructor(factory: ProviderFactory
         generateJavadoc.convention(factory.gradleProperty("dev.upcraft.gradle.multiloader.generate_javadoc").map { it.toBoolean() }.orElse(false))
 
         generateManifestBuildTimestamp.convention(true)
+
+        warningsAsErrors.convention(true)
+        xlint.convention(listOf(
+            "cast", // unnecessary casts
+            "dangling-doc-comments", // dangling javadoc
+            "text-blocks", // inconsistent whitespace in textblocks
+            "dep-ann", // deprecated in javadoc but no @Deprecated annotation
+            "empty", // empty if statements
+            "overrides",
+            "-deprecation", // allow deprecation because NeoForge likes to mark vanilla as deprecated ;-;
+            "removal",
+            "rawtypes",
+            "unchecked",
+            "static", // static method access using object instance
+            "varargs",
+        ))
 
         modVersion.convention(factory.provider { project.version.toString() })
         modGroup.convention(factory.provider { project.group.toString() })
