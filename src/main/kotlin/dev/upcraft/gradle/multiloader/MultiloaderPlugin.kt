@@ -52,13 +52,12 @@ abstract class MultiloaderPlugin : Plugin<Project> {
 
         //FIXME genuine gradle bug yay
         pluginManager.withPlugin(FabricLoom.LEGACY_PLUGIN_ID) {
-            if(!pluginManager.hasPlugin(FabricLoom.PLUGIN_ID)) {
-                error("legacy `fabric-loom` plugin detected. Please update to using `net.fabricmc.fabric-loom` instead!")
+            if(pluginManager.hasPlugin(FabricLoom.PLUGIN_ID)) {
+                applyLoom(this@with, ext)
             }
-        }
-
-        pluginManager.withPlugin(FabricLoom.PLUGIN_ID) {
-            applyLoom(this@with, ext)
+//            if(!pluginManager.hasPlugin(FabricLoom.PLUGIN_ID)) {
+//                error("legacy `fabric-loom` plugin detected. Please update to using `net.fabricmc.fabric-loom` instead!")
+//            }
         }
 
         val javaExt = the<JavaPluginExtension>()
