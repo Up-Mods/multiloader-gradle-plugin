@@ -4,7 +4,7 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.CacheableTask
 
 @CacheableTask
-class ValidateMetaFilesTask : DefaultTask() {
+abstract class ValidateMetaFilesTask : DefaultTask() {
     companion object {
         const val TASK_NAME = "validateMetaFiles"
     }
