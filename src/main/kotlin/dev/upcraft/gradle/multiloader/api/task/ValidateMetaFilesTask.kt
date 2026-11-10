@@ -1,7 +1,9 @@
 package dev.upcraft.gradle.multiloader.api.task
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.tasks.CacheableTask
 
+@CacheableTask
 class ValidateMetaFilesTask : DefaultTask() {
     companion object {
         const val TASK_NAME = "validateMetaFiles"
