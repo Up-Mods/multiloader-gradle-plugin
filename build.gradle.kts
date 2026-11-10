@@ -83,6 +83,7 @@ testing {
             dependencies {
                 implementation(project())
                 implementation(libs.junit.parameterized.tests)
+                implementation(libs.fabric.loom)
             }
 
             targets {
