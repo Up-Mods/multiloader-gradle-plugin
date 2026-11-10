@@ -1,5 +1,6 @@
 package dev.upcraft.gradle.multiloader.api
 
+import dev.upcraft.gradle.multiloader.api.task.ValidateMetaFilesTask
 import dev.upcraft.gradle.multiloader.applyCommonProjectDependency
 import dev.upcraft.gradle.multiloader.shared
 import org.gradle.api.Action
@@ -13,11 +14,8 @@ import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.SourceSet
-import org.gradle.kotlin.dsl.dependencies
-import org.gradle.kotlin.dsl.get
-import org.gradle.kotlin.dsl.newInstance
-import org.gradle.kotlin.dsl.the
-import org.gradle.kotlin.dsl.withType
+import org.gradle.api.tasks.TaskProvider
+import org.gradle.kotlin.dsl.*
 import javax.inject.Inject
 
 @Suppress("unused")
@@ -65,6 +63,12 @@ abstract class MultiloaderExtension @Inject constructor(factory: ProviderFactory
     abstract val debugRuns: Property<Boolean>
     abstract val mixinDebugRuns: Property<Boolean>
     abstract val loaderDebugRuns: Property<Boolean>
+
+    /**
+     * validate Access Transformers / Access Wideners and (fabric only) Injected Interfaces
+     */
+    abstract val autoValidateMetaFiles: Property<Boolean>
+    val validateMetaFilesTask: TaskProvider<ValidateMetaFilesTask>
 
     internal var testmodConfig: TestmodConfiguration? = null
 
@@ -114,6 +118,10 @@ abstract class MultiloaderExtension @Inject constructor(factory: ProviderFactory
         debugRuns.convention(true)
         mixinDebugRuns.convention(debugRuns)
         loaderDebugRuns.convention(false)
+
+        autoValidateMetaFiles.convention(true)
+
+        validateMetaFilesTask = project.tasks.register<ValidateMetaFilesTask>(ValidateMetaFilesTask.TASK_NAME)
     }
 
     fun withTestmod(config: Action<TestmodConfiguration>? = null): Provider<SourceSet> = with(project) {

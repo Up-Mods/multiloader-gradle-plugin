@@ -52,9 +52,13 @@ abstract class MultiloaderPlugin : Plugin<Project> {
 
         //FIXME genuine gradle bug yay
         pluginManager.withPlugin(FabricLoom.LEGACY_PLUGIN_ID) {
-            if (project.pluginManager.hasPlugin(FabricLoom.PLUGIN_ID)) {
-                applyLoom(this@with, ext)
+            if(!pluginManager.hasPlugin(FabricLoom.PLUGIN_ID)) {
+                error("legacy `fabric-loom` plugin detected. Please update to using `net.fabricmc.fabric-loom` instead!")
             }
+        }
+
+        pluginManager.withPlugin(FabricLoom.PLUGIN_ID) {
+            applyLoom(this@with, ext)
         }
 
         val javaExt = the<JavaPluginExtension>()
@@ -131,6 +135,10 @@ abstract class MultiloaderPlugin : Plugin<Project> {
             }
 
             applyMcGradleConventions(ext.loader.get())
+
+            if(ext.autoValidateMetaFiles.get()) {
+                tasks.named("check").configure { dependsOn(ext.validateMetaFilesTask) }
+            }
 
             listOf("LICENSE", "LICENSE.md").forEach { filename ->
                 val license = rootProject.file(filename)

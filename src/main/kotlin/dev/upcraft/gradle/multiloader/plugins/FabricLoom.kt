@@ -3,20 +3,25 @@
 package dev.upcraft.gradle.multiloader.plugins
 
 import dev.upcraft.gradle.multiloader.api.MultiloaderExtension
+import dev.upcraft.gradle.multiloader.ci.isRunningOnGithubActions
 import dev.upcraft.gradle.multiloader.devLogin
 import dev.upcraft.gradle.multiloader.mcTransformer
 import dev.upcraft.gradle.multiloader.shared
 import net.fabricmc.loom.api.LoomGradleExtensionAPI
 import net.fabricmc.loom.task.LoomTasks
+import net.fabricmc.loom.task.ValidateInjectedInterfacesTask
 import org.gradle.api.Project
 import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.plugins.JavaPluginExtension
+import org.gradle.api.tasks.bundling.Jar
 import org.gradle.kotlin.dsl.assign
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.invoke
+import org.gradle.kotlin.dsl.named
+import org.gradle.kotlin.dsl.register
 import org.gradle.kotlin.dsl.the
 import org.gradle.plugins.ide.idea.model.IdeaModel
 import org.jetbrains.gradle.ext.Gradle
@@ -36,15 +41,24 @@ fun applyLoom(target: Project, ext: MultiloaderExtension) = with(target) {
     val extraDeps = configurations.dependencyScope("multiloaderExtraDeps")
     configurations.named("runtimeClasspath").configure { extendsFrom(extraDeps) }
 
-    // TODO create default and testmod run configs
-
-    val loom = the(LoomGradleExtensionAPI::class)
+    val loom = the<LoomGradleExtensionAPI>()
     loom.accessWidenerPath.convention(provider { the(JavaPluginExtension::class).sourceSets["main"].resources.sourceDirectories.files
         .flatMap { it.listFiles()?.toList() ?: listOf() }
         .firstOrNull { it.name == "${ext.modId.get()}.classtweaker" }
     }.map { layout.projectDirectory.file(it.absolutePath) })
 
+    val java = the<JavaPluginExtension>()
+
+    val validateInjectionsTask = tasks.register<ValidateInjectedInterfacesTask>("validateInjectedInterfaces") {
+        modJar.convention(tasks.named<Jar>("jar").flatMap { it.archiveFile })
+        sourceRoots.from(java.sourceSets["main"].java.srcDirs)
+
+        problemReportingOptions.displayGithubActionsAnnotations.convention(ext.isRunningOnGithubActions)
+    }
+
     afterEvaluate {
+        ext.validateMetaFilesTask.configure { dependsOn(validateInjectionsTask, tasks.named("validateAccessWidener")) }
+
         if(ext.applySharedAccessTransforms.get()) {
             repositories.mcTransformer()
             dependencies {
@@ -129,5 +143,13 @@ fun applyLoomMcGradleConventions(target: Project, loader: String, attribute: Att
         project.configurations.named("modCompileClasspath").configure {
             attributes { attribute(attribute, loader) }
         }
+    }
+}
+
+fun applyLoomCommonProject(target: Project, commonProjectPath: String) {
+    val commonProject = target.project(commonProjectPath)
+    target.tasks.named<ValidateInjectedInterfacesTask>("validateInjectedInterfaces").configure {
+        val java = commonProject.the<JavaPluginExtension>()
+        sourceRoots.from(java.sourceSets["main"].java.srcDirs)
     }
 }

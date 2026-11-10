@@ -3,8 +3,10 @@
 package dev.upcraft.gradle.multiloader
 
 import dev.upcraft.gradle.multiloader.api.MultiloaderExtension
+import dev.upcraft.gradle.multiloader.plugins.FabricLoom
 import dev.upcraft.gradle.multiloader.plugins.ModDevGradle
 import dev.upcraft.gradle.multiloader.plugins.applyMDGCommonProject
+import dev.upcraft.gradle.multiloader.plugins.applyLoomCommonProject
 import org.gradle.api.Project
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.compile.JavaCompile
@@ -24,6 +26,10 @@ fun applyCommonProjectDependency(current: Project, commonProject: String) = with
 
         pluginManager.withPlugin(ModDevGradle.PLUGIN_ID) {
             applyMDGCommonProject(current, commonProject)
+        }
+
+        pluginManager.withPlugin(FabricLoom.PLUGIN_ID) {
+            applyLoomCommonProject(current, commonProject)
         }
     }
 

@@ -26,8 +26,6 @@ fun applyMDG(target: Project, ext: MultiloaderExtension) = with(target) {
     configurations.named("runtimeClasspath").configure { extendsFrom(localRuntime) }
 
     extensions.configure<NeoForgeExtension> {
-        validateAccessTransformers = true
-
         val java = the<JavaPluginExtension>()
         java.sourceSets["main"].resources.sourceDirectories.files
             .flatMap { it.listFiles()?.toList() ?: listOf() }
@@ -54,6 +52,8 @@ fun applyMDG(target: Project, ext: MultiloaderExtension) = with(target) {
             }
 
         afterEvaluate {
+            validateAccessTransformers = ext.autoValidateMetaFiles
+
             addModdingDependenciesTo(the<JavaPluginExtension>().sourceSets["test"])
 
             if(ext.applySharedAccessTransforms.get()) {
